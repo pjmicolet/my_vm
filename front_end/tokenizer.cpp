@@ -1,15 +1,26 @@
+//This tokenizer was generated at time:2020-12-20 16:06:54.071337
 #include "tokenizer.h"
 #include <iostream>
 
-std::set<char> separators = {';', '{', '(', ')', '}'};
-std::set<char> operators = {'+','-','*','/','='};
-std::set<std::string> keywords = {"if", "else", "while", "for"};
+std::set<std::string> operators = {"+", "-", "*", "/", "=", "=="};
+std::set<char> separator = {'{', '(', ')', '}', ';'};
+std::set<std::string> keyword = {"while", "for", "if", "else", "do"};
+
+auto getType(const std::string& token ) -> token_type {
+    if(operators.find(token) != operators.end())
+        return OPERATORS;
+    if(token.size()==1 && separator.find(token.at(0)) != separator.end())
+        return SEPARATOR;
+    if(keyword.find(token) != keyword.end())
+        return KEYWORD;
+    return IDENTIFIER;
+}
 
 auto operator << (std::ostream& o, const Token& token ) -> std::ostream& {
 	o << "Value: " << token.value_ << " Type: ";
 	switch(token.type_) {
 		case IDENTIFIER:
-			o << "Identifier";
+			o << "Identfier";
 			break;
 		case KEYWORD:
 			o << "Keyword";
@@ -17,7 +28,7 @@ auto operator << (std::ostream& o, const Token& token ) -> std::ostream& {
 		case SEPARATOR:
 			o << "Separator";
 			break;
-		case OPERATOR:
+		case OPERATORS:
 			o << "Operator";
 			break;
 		case LITERAL:
@@ -27,22 +38,10 @@ auto operator << (std::ostream& o, const Token& token ) -> std::ostream& {
 	return o;
 }
 
-auto getType(const std::string& token ) -> token_type {
-	if(token.size()==1 && separators.find(token.at(0)) != separators.end())
-		return SEPARATOR;
-	if(token.size()==1 && operators.find(token.at(0)) != operators.end())
-		return OPERATOR;
-	if(token.find_first_not_of("0123456789") == std::string::npos)
-		return LITERAL;
-	if(keywords.find(token) != keywords.end())
-		return KEYWORD;
-	return IDENTIFIER;
-}
-
-Tokenizer::Tokenizer(const std::string& line) {
+Tokenizer::Tokenizer(const std::string& line ) {
 	std::string temp = "";
 	for(auto& character : line) {
-		if(separators.find(character) != separators.end() || character == TOKEN_SEP) {
+		if(separator.find(character) != separator.end() || character == TOKEN_SEP) {
 			tokens_.emplace_back(Token(temp, getType(temp)));	
 			temp = "";
 		}
@@ -53,7 +52,7 @@ Tokenizer::Tokenizer(const std::string& line) {
 	if(temp.size() != 0)
 		tokens_.emplace_back(Token(temp, getType(temp)));
 }
-
 const std::vector<Token>& Tokenizer::getTokens() const {
 	return tokens_;
 }
+

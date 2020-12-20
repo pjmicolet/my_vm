@@ -6,7 +6,7 @@
 
 #define TOKEN_SEP ' '
 
-enum token_type { IDENTIFIER, KEYWORD, SEPARATOR, OPERATOR, LITERAL }; 
+enum token_type { IDENTIFIER, KEYWORD, SEPARATOR, OPERATORS, LITERAL }; 
 
 struct Token {
 	Token( std::string value, token_type type ) : value_(value), type_(type) {};

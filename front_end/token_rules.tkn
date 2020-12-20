@@ -1,0 +1,3 @@
+OPERATORS: +, -, *, /, =, ==
+SEPARATOR: {, (, ), }, ;
+KEYWORD: while, for, if, else, do
