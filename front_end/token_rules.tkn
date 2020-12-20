@@ -1,5 +1,5 @@
 OPERATORS: +, -, *, /, =, ==
-SEPARATOR: ;
+SEPARATOR:__separator__,{,},(,),[,],;
 CURLY_OPEN: {
 CURLY_CLOSE: }
 PAREN_OPEN: (

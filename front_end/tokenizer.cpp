@@ -1,9 +1,9 @@
-//This tokenizer was generated at time:2020-12-20 17:10:49.788590
+//This tokenizer was generated at time:2020-12-20 17:26:40.882786
 #include "tokenizer.h"
 #include <iostream>
 
 std::set<std::string> operators = {"+", "-", "*", "/", "=", "=="};
-std::set<char> separator = {';'};
+std::set<char> separator = {'{', '}', '(', ')', '[', ']', ';'};
 std::set<char> curly_open = {'{'};
 std::set<char> curly_close = {'}'};
 std::set<char> paren_open = {'('};
@@ -15,8 +15,6 @@ std::set<std::string> keyword = {"while", "for", "if", "else", "do"};
 auto getType(const std::string& token ) -> token_type {
     if(operators.find(token) != operators.end())
         return OPERATORS;
-    if(token.size()==1 && separator.find(token.at(0)) != separator.end())
-        return SEPARATOR;
     if(token.size()==1 && curly_open.find(token.at(0)) != curly_open.end())
         return CURLY_OPEN;
     if(token.size()==1 && curly_close.find(token.at(0)) != curly_close.end())
@@ -78,13 +76,20 @@ auto operator << (std::ostream& o, const Token& token ) -> std::ostream& {
 Tokenizer::Tokenizer(const std::string& line ) {
 	std::string temp = "";
 	for(auto& character : line) {
-		if(separator.find(character) != separator.end() || character == TOKEN_SEP) {
+		if(separator.find(character) != separator.end()) {
+			tokens_.emplace_back(Token(temp, getType(temp)));	
+			temp = "";
+			temp += character;
+			tokens_.emplace_back(Token(temp, getType(temp)));
+			temp = "";
+		}
+		else if( character == TOKEN_SEP ) {
 			tokens_.emplace_back(Token(temp, getType(temp)));	
 			temp = "";
 		}
 		else {			
 			temp += character;
-		}	
+		}
 	}
 	if(temp.size() != 0)
 		tokens_.emplace_back(Token(temp, getType(temp)));

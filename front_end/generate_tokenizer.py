@@ -4,6 +4,7 @@ import sys
 base_class = "Tokenizer"
 literal_token = "__decimal__"
 identifier = "__any__"
+separators = "__separator__"
 token_sep_name = "TOKEN_SEP"
 no_sets = [ literal_token, identifier ]
 
@@ -22,6 +23,8 @@ def generate_sets( token_types : dict ) -> str:
 		tokens = token_types[ possible_token ]
 		if tokens[0] in no_sets:
 			continue
+		if tokens[0] == separators:
+			tokens = tokens[1:]
 		is_char = is_character( tokens )
 		char_wrap = "'" if is_char else "\""
 		token_set = "std::set<" + ( "char" if is_char else "std::string" ) + "> " + possible_token.lower() + " = {" + ", ".join( "{1}{0}{1}".format( token, char_wrap ) for token in tokens )+ "};\n"
@@ -33,13 +36,21 @@ def get_identifier_typename( token_types: dict ) -> str:
 		if token_types[token][0] == identifier:
 			return token
 
+def get_separator_typename( token_types: dict ) -> str:
+	for token in token_types:
+		if token_types[token][0] == separators:
+			return token
+
 def generate_get_type( token_types: dict ) -> str:
 	function_header = "auto getType(const std::string& token ) -> token_type {\n"
 	ident = " "*4
 	body = ""
 	identifier_name = get_identifier_typename( token_types )
+	separator_name = get_separator_typename( token_types )
 	for possible_token in token_types:
 		if possible_token == identifier_name:
+			continue
+		if possible_token == separator_name:
 			continue
 		tokens = token_types[ possible_token ]
 		is_char = is_character( tokens )
@@ -60,20 +71,27 @@ def generate_type_cout_operator( token_types: dict ) -> str:
 	switch_statement += "{0}}}{0}return o;\n}}\n".format(" "*4 )
 	return switch_statement;
 	
-def generate_tokenizer_init() -> str:
+def generate_tokenizer_init( separator_name : str ) -> str:
 	function_header = "{0}::{0}(const std::string& line ) {{\n".format(base_class) 
 	body="""	std::string temp = "";
-	for(auto& character : line) {
-		if(separator.find(character) != separator.end() || character == TOKEN_SEP) {
+	for(auto& character : line) {{
+		if({0}.find(character) != {0}.end()) {{
 			tokens_.emplace_back(Token(temp, getType(temp)));	
 			temp = "";
-		}
-		else {			
 			temp += character;
-		}	
-	}
+			tokens_.emplace_back(Token(temp, getType(temp)));
+			temp = "";
+		}}
+		else if( character == TOKEN_SEP ) {{
+			tokens_.emplace_back(Token(temp, getType(temp)));	
+			temp = "";
+		}}
+		else {{			
+			temp += character;
+		}}
+	}}
 	if(temp.size() != 0)
-		tokens_.emplace_back(Token(temp, getType(temp)));\n}"""
+		tokens_.emplace_back(Token(temp, getType(temp)));\n}}""".format( separator_name )
 	return function_header + body
 
 def generate_tokenizer_getter() -> str:
@@ -126,7 +144,7 @@ def generate_tokenizer( path : str, cpp_file: str, h_file: str ) -> None:
 		w_cpp_file.write( generate_sets( token_types ) + "\n" )
 		w_cpp_file.write( generate_get_type( token_types ) +"\n")
 		w_cpp_file.write( generate_type_cout_operator( token_types ) +"\n" )
-		w_cpp_file.write( generate_tokenizer_init() +"\n" )
+		w_cpp_file.write( generate_tokenizer_init( get_separator_typename( token_types ).lower() ) +"\n" )
 		w_cpp_file.write( generate_tokenizer_getter() + "\n")
 
 generate_tokenizer( sys.argv[1], sys.argv[2], sys.argv[3] )
