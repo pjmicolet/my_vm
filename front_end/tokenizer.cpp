@@ -1,4 +1,4 @@
-//This tokenizer was generated at time:2020-12-20 16:49:28.892742
+//This tokenizer was generated at time:2020-12-20 16:55:52.164797
 #include "tokenizer.h"
 #include <iostream>
 
@@ -6,8 +6,6 @@ std::set<std::string> operators = {"+", "-", "*", "/", "=", "=="};
 std::set<char> separator = {'{', '(', ')', '}', ';'};
 std::set<char> array_separator = {'[', ']'};
 std::set<std::string> keyword = {"while", "for", "if", "else", "do"};
-std::set<std::string> literal = {"__decimal__"};
-std::set<std::string> identifier = {"__any__"};
 
 auto getType(const std::string& token ) -> token_type {
     if(operators.find(token) != operators.end())

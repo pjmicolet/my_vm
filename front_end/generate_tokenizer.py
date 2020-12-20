@@ -5,6 +5,7 @@ base_class = "Tokenizer"
 literal_token = "__decimal__"
 identifier = "__any__"
 token_sep_name = "TOKEN_SEP"
+no_sets = [ literal_token, identifier ]
 
 def generate_timestamp() -> str:
 	return "//This tokenizer was generated at time:{0}".format( datetime.now() )
@@ -19,6 +20,8 @@ def generate_sets( token_types : dict ) -> str:
 	token_sets = ""
 	for possible_token in token_types:
 		tokens = token_types[ possible_token ]
+		if tokens[0] in no_sets:
+			continue
 		is_char = is_character( tokens )
 		char_wrap = "'" if is_char else "\""
 		token_set = "std::set<" + ( "char" if is_char else "std::string" ) + "> " + possible_token.lower() + " = {" + ", ".join( "{1}{0}{1}".format( token, char_wrap ) for token in tokens )+ "};\n"
