@@ -1,3 +1,6 @@
 OPERATORS: +, -, *, /, =, ==
 SEPARATOR: {, (, ), }, ;
+ARRAY_SEPARATOR: [, ]
 KEYWORD: while, for, if, else, do
+LITERAL: __decimal__
+IDENTIFIER: __any__
