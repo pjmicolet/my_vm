@@ -1,10 +1,10 @@
-//This tokenizer was generated at time:2020-12-20 16:55:52.164732
+//This tokenizer was generated at time:2020-12-20 17:10:49.788503
 #pragma once
 #include<vector>
 #include<set>
 #include<iostream>
 #define TOKEN_SEP ' '
-enum token_type { OPERATORS,SEPARATOR,ARRAY_SEPARATOR,KEYWORD,LITERAL,IDENTIFIER };
+enum token_type { OPERATORS,SEPARATOR,CURLY_OPEN,CURLY_CLOSE,PAREN_OPEN,PAREN_CLOSE,ARRAY_OPEN,ARRAY_CLOSE,KEYWORD,LITERAL,IDENTIFIER };
 struct Token {
 	Token( std::string value, token_type type ) : value_(value), type_(type) {};
 	const std::string value_;

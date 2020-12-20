@@ -1,10 +1,15 @@
-//This tokenizer was generated at time:2020-12-20 16:55:52.164797
+//This tokenizer was generated at time:2020-12-20 17:10:49.788590
 #include "tokenizer.h"
 #include <iostream>
 
 std::set<std::string> operators = {"+", "-", "*", "/", "=", "=="};
-std::set<char> separator = {'{', '(', ')', '}', ';'};
-std::set<char> array_separator = {'[', ']'};
+std::set<char> separator = {';'};
+std::set<char> curly_open = {'{'};
+std::set<char> curly_close = {'}'};
+std::set<char> paren_open = {'('};
+std::set<char> paren_close = {')'};
+std::set<char> array_open = {'['};
+std::set<char> array_close = {']'};
 std::set<std::string> keyword = {"while", "for", "if", "else", "do"};
 
 auto getType(const std::string& token ) -> token_type {
@@ -12,8 +17,18 @@ auto getType(const std::string& token ) -> token_type {
         return OPERATORS;
     if(token.size()==1 && separator.find(token.at(0)) != separator.end())
         return SEPARATOR;
-    if(token.size()==1 && array_separator.find(token.at(0)) != array_separator.end())
-        return ARRAY_SEPARATOR;
+    if(token.size()==1 && curly_open.find(token.at(0)) != curly_open.end())
+        return CURLY_OPEN;
+    if(token.size()==1 && curly_close.find(token.at(0)) != curly_close.end())
+        return CURLY_CLOSE;
+    if(token.size()==1 && paren_open.find(token.at(0)) != paren_open.end())
+        return PAREN_OPEN;
+    if(token.size()==1 && paren_close.find(token.at(0)) != paren_close.end())
+        return PAREN_CLOSE;
+    if(token.size()==1 && array_open.find(token.at(0)) != array_open.end())
+        return ARRAY_OPEN;
+    if(token.size()==1 && array_close.find(token.at(0)) != array_close.end())
+        return ARRAY_CLOSE;
     if(keyword.find(token) != keyword.end())
         return KEYWORD;
     if(token.find_first_not_of("0123456789") == std::string::npos)
@@ -30,8 +45,23 @@ auto operator << (std::ostream& o, const Token& token ) -> std::ostream& {
          case SEPARATOR:
              o << "separator";
             break;
-         case ARRAY_SEPARATOR:
-             o << "array_separator";
+         case CURLY_OPEN:
+             o << "curly_open";
+            break;
+         case CURLY_CLOSE:
+             o << "curly_close";
+            break;
+         case PAREN_OPEN:
+             o << "paren_open";
+            break;
+         case PAREN_CLOSE:
+             o << "paren_close";
+            break;
+         case ARRAY_OPEN:
+             o << "array_open";
+            break;
+         case ARRAY_CLOSE:
+             o << "array_close";
             break;
          case KEYWORD:
              o << "keyword";

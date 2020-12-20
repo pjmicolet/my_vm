@@ -1,6 +1,11 @@
 OPERATORS: +, -, *, /, =, ==
-SEPARATOR: {, (, ), }, ;
-ARRAY_SEPARATOR: [, ]
+SEPARATOR: ;
+CURLY_OPEN: {
+CURLY_CLOSE: }
+PAREN_OPEN: (
+PAREN_CLOSE: )
+ARRAY_OPEN: [
+ARRAY_CLOSE: ]
 KEYWORD: while, for, if, else, do
 LITERAL: __decimal__
 IDENTIFIER: __any__
