@@ -27,26 +27,21 @@ def generate_sets( token_types : dict ) -> str:
 			tokens = tokens[1:]
 		is_char = is_character( tokens )
 		char_wrap = "'" if is_char else "\""
-		token_set = "std::set<" + ( "char" if is_char else "std::string" ) + "> " + possible_token.lower() + " = {" + ", ".join( "{1}{0}{1}".format( token, char_wrap ) for token in tokens )+ "};\n"
+		token_set = "std::set<{0}> {1} = {{{2}}};\n".format( ( "char" if is_char else "std::string" ), possible_token.lower(), ", ".join( "{0}{1}{0}".format( char_wrap, token) for token in tokens ) )
 		token_sets += token_set
 	return token_sets
 
-def get_identifier_typename( token_types: dict ) -> str:
+def get_typename( token_types: dict, typestr : str ) -> str:
 	for token in token_types:
-		if token_types[token][0] == identifier:
-			return token
-
-def get_separator_typename( token_types: dict ) -> str:
-	for token in token_types:
-		if token_types[token][0] == separators:
+		if token_types[token][0] == typestr:
 			return token
 
 def generate_get_type( token_types: dict ) -> str:
 	function_header = "auto getType(const std::string& token ) -> token_type {\n"
 	ident = " "*4
 	body = ""
-	identifier_name = get_identifier_typename( token_types )
-	separator_name = get_separator_typename( token_types )
+	identifier_name = get_typename( token_types, identifier )
+	separator_name = get_typename( token_types, separators )
 	for possible_token in token_types:
 		if possible_token == identifier_name:
 			continue
@@ -144,7 +139,7 @@ def generate_tokenizer( path : str, cpp_file: str, h_file: str ) -> None:
 		w_cpp_file.write( generate_sets( token_types ) + "\n" )
 		w_cpp_file.write( generate_get_type( token_types ) +"\n")
 		w_cpp_file.write( generate_type_cout_operator( token_types ) +"\n" )
-		w_cpp_file.write( generate_tokenizer_init( get_separator_typename( token_types ).lower() ) +"\n" )
+		w_cpp_file.write( generate_tokenizer_init( get_typename( token_types, separators ).lower() ) +"\n" )
 		w_cpp_file.write( generate_tokenizer_getter() + "\n")
 
 generate_tokenizer( sys.argv[1], sys.argv[2], sys.argv[3] )
